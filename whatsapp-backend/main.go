@@ -30,6 +30,8 @@ func main() {
 		fmt.Println("Error in db: ", err)
 	}
 
+	manager := routes.NewManager()
+
 	//creating a new router
 	router := gin.Default()
 	corsConfig := cors.DefaultConfig()
@@ -50,7 +52,7 @@ func main() {
 	router.POST("/api/messages", middleware.AuthMiddleware(), routes.SendMessage)
 	router.GET("/api/messages/:senderID/:receiverID", middleware.AuthMiddleware(), routes.GetMessages)
 
-	router.GET("/ws", middleware.AuthMiddleware(), routes.HandleWebSocket)
+	router.GET("/ws", manager.ServeWS)
 
 	router.Run(":" + port)
 

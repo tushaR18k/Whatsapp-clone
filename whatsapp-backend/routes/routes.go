@@ -11,7 +11,6 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"golang.org/x/crypto/bcrypt"
@@ -296,47 +295,4 @@ func GetMessages(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, messages)
-}
-
-func HandleWebSocket(c *gin.Context) {
-	upgrader := websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool { return true },
-	}
-
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		log.Println("Failed to upgrade to WebSocket:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upgrade to websocket"})
-		return
-	}
-
-	go handleWebSocketConn(conn)
-
-}
-
-func handleWebSocketConn(conn *websocket.Conn) {
-	defer conn.Close()
-
-	for {
-		_, p, err := conn.ReadMessage()
-		if err != nil {
-			log.Println("Error reading WebSocket message:", err)
-			break
-		}
-
-		message := string(p)
-		fmt.Println("Recieved message:", message)
-
-		err = processMessage(message)
-		if err != nil {
-			log.Println("Error processing WebSocket message:", err)
-			break
-		}
-	}
-}
-
-func processMessage(message string) error {
-
-	fmt.Println("Message: " + message)
-	return nil
 }

@@ -37,3 +37,8 @@ type Message struct {
 	Sender   User `gorm:"foreignkey:SenderID" json:"-"`
 	Receiver User `gorm:"foreignkey:ReceiverID" json:"-"`
 }
+
+type WebSocketResponse struct {
+	Message string `json:"message,omitempty"`
+	Error   string `json:"error,omitempty"`
+}
