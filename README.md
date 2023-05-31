@@ -1,4 +1,4 @@
-## WhatsAPP Clone
+## WhatsAPP Clone Full code find on here, as there was some issue with this repository: [Click here!](https://github.com/tushaR18k/Whatsapp-Clone2)
 ### This project is build using React and Golang.
 * For storage Postgre SQL is used using GORM package
 * Websocket is used for real time chatting
