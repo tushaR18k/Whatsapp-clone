@@ -22,8 +22,10 @@ const (
 
 // Payload sent in the send_message event
 type SendMessageEvent struct {
-	Message string `json:"message"`
-	From    string `json:"from"`
+	Message  string `json:"message"`
+	From     int    `json:"from"`
+	To       int    `json:"to"`
+	Chatroom string `json:"chatroom"`
 }
 
 // NewMessageEvent is returned when responding to send_message
@@ -45,10 +47,12 @@ func SendMessageHandler(event Event, c *Client) error {
 	broadMessage.Sent = time.Now()
 	broadMessage.Message = chatevent.Message
 	broadMessage.From = chatevent.From
+	broadMessage.To = chatevent.To
+	broadMessage.Chatroom = chatevent.Chatroom
 
 	data, err := json.Marshal(broadMessage)
 	if err != nil {
-		return fmt.Errorf("Failed to marshal broadcast message: %v", err)
+		return fmt.Errorf("failed to marshal broadcast message: %v", err)
 	}
 
 	//Place payload into an Event
@@ -58,7 +62,10 @@ func SendMessageHandler(event Event, c *Client) error {
 
 	//Broadcast to all other clients
 	for client := range c.manager.clients {
-		client.egress <- outgoingEvent
+		//Only send to clients inside the same chatroom
+		if client.chatroom == c.chatroom {
+			client.egress <- outgoingEvent
+		}
 	}
 
 	return nil

@@ -28,6 +28,9 @@ type Client struct {
 
 	//egress is used to avoid concurrent writeon the websocket
 	egress chan Event
+
+	//Client room
+	chatroom string
 }
 
 // Constructor for the client
@@ -36,6 +39,7 @@ func NewClient(conn *websocket.Conn, manager *Manager) *Client {
 		connection: conn,
 		manager:    manager,
 		egress:     make(chan Event),
+		chatroom:   "",
 	}
 }
 
